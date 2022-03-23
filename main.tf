@@ -87,12 +87,16 @@ EOF
 
 resource "aws_s3_bucket" "metric_stream" {
   bucket = replace(var.name, "_", "-")
-  acl    = "private"
 
   tags = var.tags
 
   # 'true' allows terraform to delete this bucket even if it is not empty.
   force_destroy = var.s3_force_destroy
+}
+
+resource "aws_s3_bucket_acl" "metric_stream" {
+  bucket = aws_s3_bucket.metric_stream.id
+  acl    = "private"
 }
 
 resource "aws_kinesis_firehose_delivery_stream" "metrics" {
